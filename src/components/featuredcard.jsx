@@ -1,30 +1,33 @@
 import React from 'react';
 import '../style/featured.scss';
-import Header from './header';
+import Header from './header'
 import { cookies } from "next/headers";
 import Image from "next/image";
 
-export default async function FeaturedCard() {
-    const cookieStore = await cookies();
-    const access_token_cookie = cookieStore.get("ipm_access_token");
-    const access_token = access_token_cookie ? access_token_cookie.value : null;
 
-    if (!access_token) return <p>Ingen Spotify token fundet</p>;
+export default async function FeaturedCard() {
+
+    const cookieStore = await cookies();
+
+    const access_token = cookieStore.get("ipm_access_token");
 
     const response = await fetch("https://api.spotify.com/v1/browse/new-releases", {
-        headers: { "Authorization": `Bearer ${access_token}` }
+        headers: {
+            "Authorization": `Bearer ${access_token.value}`
+        }
     });
 
-    if (!response.ok) return <p>Fejl ved hentning af data</p>;
-
     const data = await response.json();
+    console.log("data", data);
+
+
 
     return (
         <div className="featuredContent">
             <Header />
             <h2 className="page-title">Featured</h2>
 
-            {data.albums?.items?.map((card, index) => (
+            {data.albums.items.map((card, index) => (
                 <div className="card" key={index}>
                     <Image
                         unoptimized
